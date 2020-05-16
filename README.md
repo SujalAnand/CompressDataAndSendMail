@@ -1,6 +1,9 @@
 #Project Detail
 
+This project is based on mule 4.3.0
+
 This is a Mulesoft Project Used to Zip a folder which contains multiple file tested with size 500 mb + .
+
 send the zip file through mail as an attachment.
 
 #Configuration To be Done
