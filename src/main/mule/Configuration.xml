@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties" xmlns:email="http://www.mulesoft.org/schema/mule/email"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/email http://www.mulesoft.org/schema/mule/email/current/mule-email.xsd
+http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd">
+	<configuration-properties doc:name="Configuration properties" doc:id="07ad4264-23dc-4c13-b772-01c7f5cdcab7" file="properties\sample-${mule.env}-file.yaml" />
+	<global-property doc:name="Global Property" doc:id="4c720c2a-7f06-4a8b-9b1c-6533b5404e7b" name="mule.env" value="dev" />
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="2c2f51f0-dbc2-417e-9902-cb20bfec58a3" >
+		<http:listener-connection host="0.0.0.0" port="${http.port}" />
+	</http:listener-config>
+	<email:smtp-config name="Email_SMTP" doc:name="Email SMTP" doc:id="96e48f89-d42a-4faf-9ea8-2e757b3da52c" >
+		<email:smtp-connection host="${secure::Email.host}" port="${secure::Email.port}" user="${secure::Email.userName}" password="${secure::Email.password}" timeoutUnit="MINUTES" >
+			<email:properties >
+				<email:property key="${secure::Email.property}" value="${secure::Email.value}" />
+			</email:properties>
+		</email:smtp-connection>
+	</email:smtp-config>
+	<global-property doc:name="Global Property" doc:id="8a850b43-5b7e-4dda-a12b-cd2ccec90188" name="mule.key" value="sujal" />
+	<secure-properties:config name="Secure_Properties_Config" doc:name="Secure Properties Config" doc:id="9c4148c6-1ce8-466a-8c0a-d9da5406a81f" file="properties\secure\sample-${mule.env}-Email.properties" key="${mule.key}" >
+		<secure-properties:encrypt algorithm="Blowfish" />
+	</secure-properties:config>
+	<configuration-properties doc:name="Configuration properties" doc:id="26e94eed-222e-447f-ba86-311ac36160a3" file="properties\secure\sample-${mule.env}-Email.properties" />
+</mule>

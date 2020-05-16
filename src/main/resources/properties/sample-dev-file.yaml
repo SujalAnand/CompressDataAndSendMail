@@ -1,0 +1,16 @@
+#HTTP Listener Configuration
+http:
+  port: "8081"
+  path: "/test"
+  
+#File Path Used In Execute Script
+Dir:
+  input: "C://TEMP//"
+  output: "C://TEMP//"
+File:
+  name: "testfile"
+
+#Read Directory and Name Of the Attachment for Email Connector
+Email:
+  attachmentName: "testfile.zip"
+  readPath: "/TEMP/testfile.zip"

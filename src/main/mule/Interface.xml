@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:email="http://www.mulesoft.org/schema/mule/email" xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd
+http://www.mulesoft.org/schema/mule/email http://www.mulesoft.org/schema/mule/email/current/mule-email.xsd">
+	<flow name="createZipFile" doc:id="f5907bbc-d1af-4f69-9fc1-e25996398ed8" >
+		<http:listener doc:name="Listener" doc:id="b3ebc8fb-9b75-4eb2-a6b8-b874834bce82" config-ref="HTTP_Listener_config" path="${http.path}"/>
+		<scripting:execute doc:name="Execute" doc:id="01a36219-e784-4c71-a0b3-9fed4698424e" engine="groovy">
+			<scripting:code ><![CDATA[import java.util.zip.*
+import java.io.File
+def zipFileName = "${File.name}"
+String inputDir = "${Dir.input}" + zipFileName
+String outputDir = "${Dir.output}" + zipFileName + ".zip"
+ZipOutputStream zipFile = new ZipOutputStream(new FileOutputStream(outputDir))
+new File(inputDir).eachFile() { file ->
+//check if file
+if (file.isFile()){
+zipFile.putNextEntry(new ZipEntry(file.name))
+def buffer = new byte[file.size()]
+file.withInputStream {
+zipFile.write(buffer, 0, it.read(buffer))
+}
+zipFile.closeEntry()
+}
+}
+zipFile.close()
+directory = new File(inputDir)
+directory.deleteDir()]]></scripting:code>
+		</scripting:execute>
+		<logger level="INFO" doc:name="Logger" doc:id="182ea297-5406-4cb3-ac4d-21bce64d3fdd" message="payload"/>
+		<flow-ref doc:name="Flow Reference" doc:id="72efb628-25a8-4eba-b414-9ea317547d64" name="sendMail"/>
+		<logger level="INFO" doc:name="Logger" doc:id="033263bc-7a4a-4e42-8daa-843cd733b4cc" message="#[payload]"/>
+	</flow>
+	<flow name="sendMail" doc:id="f3b1f7dc-20c5-416b-a7c2-b12bcff13e0b" >
+		<email:send doc:name="Send" doc:id="6cfc5343-f7ff-4b7f-9096-73353b7d96cf" config-ref="Email_SMTP" fromAddress="${secure::Email.userName}" subject="Compressed Zip File ">
+			<email:to-addresses >
+				<email:to-address value="${secure::Email.sendTo}" />
+			</email:to-addresses>
+			<email:body >
+				<email:content ><![CDATA[Hi Sir,
+I am sending You the Zip File . Please Find it in the Attachments.
+
+Thanks And Regards,
+Sujal Anand]]></email:content>
+			</email:body>
+			<email:attachments ><![CDATA[#['${Email.attachmentName}' :readUrl("file://${Email.readPath}","application/octet-stream")]]]></email:attachments>
+		</email:send>
+		<set-payload value="Email Send Successfully" doc:name="Set Payload" doc:id="b185f9ac-5567-4325-bc74-991d88da68c1" />
+		<logger level="INFO" doc:name="Logger" doc:id="62ac045b-197d-4b21-9f0b-3d2442a20e35" message="#[payload]"/>
+	</flow>
+</mule>
