@@ -1,4 +1,4 @@
-#Project Detail
+# Project Detail
 
 This project is based on mule 4.3.0
 
@@ -6,7 +6,7 @@ This is a Mulesoft Project Used to Zip a folder which contains multiple file tes
 
 send the zip file through mail as an attachment.
 
-#Configuration To be Done
+# Configuration To be Done
 
 Install New Software from:
 http://anypoint-enterprise-security-update-site.s3.amazonaws.com/1.8.0
@@ -35,7 +35,7 @@ Email.sendTo -> Recipient Gmail Username
 
 Enter the Email username and password and open the file using Mule Properties Editor and Encrypt at the same time using the Algorithm "BlowFish" and password as "sujal"
 
-#point kept in mind
+# point kept in mind
 
 If the file is long , it will take time to run or send the mail, keep patience
 
